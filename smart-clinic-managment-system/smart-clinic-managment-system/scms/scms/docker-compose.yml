@@ -1,0 +1,17 @@
+services:
+  app:
+    image: openjdk:17-jdk-slim
+    container_name: smart-clinic-app
+    working_dir: /app
+    volumes:
+      - ./scms-0.0.1-SNAPSHOT.jar:/app/app.jar
+      - /var/log/my-app:/var/log/my-app
+    environment:
+      # These will be set by the user data script via environment variables
+      - SPRING_DATASOURCE_URL=jdbc:mysql://${RDS_HOSTNAME}:3306/${RDS_DB_NAME}?useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=${RDS_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${RDS_PASSWORD}
+    command: java -jar /app/app.jar
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
