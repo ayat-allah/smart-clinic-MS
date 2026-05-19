@@ -27,97 +27,97 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthFilter;
-    private final AuthenticationProvider authenticationProvider;
+        private final JwtAuthenticationFilter jwtAuthFilter;
+        private final AuthenticationProvider authenticationProvider;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .cors(Customizer.withDefaults())
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                http
+                                .cors(Customizer.withDefaults())
+                                .csrf(AbstractHttpConfigurer::disable)
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                .authorizeHttpRequests(auth -> auth
+                                .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers(
-                                "/api/auth/**",
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html")
-                        .permitAll()
+                                                .requestMatchers(
+                                                                "/api/auth/**",
+                                                                "/v3/api-docs/**",
+                                                                "/swagger-ui/**",
+                                                                "/swagger-ui.html")
+                                                .permitAll()
 
-                        .requestMatchers(
-                                "/api/patient/**",
-                                "/api/appointments/my-appointments",
-                                "/api/profile/**")
-                        .hasRole("PATIENT")
+                                                .requestMatchers(
+                                                                "/api/patient/**",
+                                                                "/api/appointments/my-appointments",
+                                                                "/api/profile/**")
+                                                .hasRole("PATIENT")
 
-                        .requestMatchers("/api/appointments/book")
-                        .hasAnyRole("PATIENT", "ADMIN", "RECEPTIONIST", "DOCTOR")
+                                                .requestMatchers("/api/appointments/book")
+                                                .hasAnyRole("PATIENT", "ADMIN", "RECEPTIONIST", "DOCTOR")
 
-                        .requestMatchers(
-                                "/api/doctor/**",
-                                "/api/prescriptions/add/**")
-                        .hasRole("DOCTOR")
+                                                .requestMatchers(
+                                                                "/api/doctor/**",
+                                                                "/api/prescriptions/add/**")
+                                                .hasRole("DOCTOR")
 
-                        .requestMatchers("/api/dashboard/stats")
-                        .hasAnyRole("DOCTOR", "ADMIN")
+                                                .requestMatchers("/api/dashboard/stats")
+                                                .hasAnyRole("DOCTOR", "ADMIN")
 
-                        .requestMatchers("/api/admin/schedules/**")
-                        .hasAnyRole("ADMIN", "DOCTOR")
-                        .requestMatchers("/api/admin/users/all")
-                        .hasAnyRole("ADMIN", "RECEPTIONIST", "PATIENT", "DOCTOR")
+                                                .requestMatchers("/api/admin/schedules/**")
+                                                .hasAnyRole("ADMIN", "DOCTOR")
+                                                .requestMatchers("/api/admin/users/all")
+                                                .hasAnyRole("ADMIN", "RECEPTIONIST", "PATIENT", "DOCTOR")
 
-                        .requestMatchers("/api/admin/**")
-                        .hasRole("ADMIN")
+                                                .requestMatchers("/api/admin/**")
+                                                .hasRole("ADMIN")
 
-                        .requestMatchers("/api/receptionist/**")
-                        .hasRole("RECEPTIONIST")
+                                                .requestMatchers("/api/prescriptions/**")
+                                                .hasAnyRole("ADMIN", "DOCTOR", "PATIENT", "RECEPTIONIST")
 
-                        .requestMatchers(
-                                "/api/invoices/generate/**",
-                                "/api/appointments/check-in/**",
-                                "/api/invoices/all",
-                                "/api/invoices/mark-paid/**",
-                                "/api/invoices/delete/**")
-                        .hasAnyRole("ADMIN", "RECEPTIONIST")
+                                                .requestMatchers(
+                                                                "/api/invoices/generate/**",
+                                                                "/api/appointments/check-in/**",
+                                                                "/api/invoices/all",
+                                                                "/api/invoices/mark-paid/**",
+                                                                "/api/invoices/delete/**")
+                                                .hasAnyRole("ADMIN", "RECEPTIONIST")
 
-                        .requestMatchers("/api/appointments/all")
-                        .hasAnyRole("RECEPTIONIST", "ADMIN", "DOCTOR")
+                                                .requestMatchers("/api/appointments/all")
+                                                .hasAnyRole("RECEPTIONIST", "ADMIN", "DOCTOR")
 
-                        .anyRequest().authenticated())
+                                                .anyRequest().authenticated())
 
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                                .authenticationProvider(authenticationProvider)
+                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
-    }
+                return http.build();
+        }
 
-    @Bean
-    public OpenAPI customOpenAPI() {
-        return new OpenAPI()
-                .info(new Info()
-                        .title("Smart Clinic API")
-                        .version("1.0")
-                        .description("Documentation for Smart Clinic System Backend"))
-                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
-                .components(new Components()
-                        .addSecuritySchemes("bearerAuth", new SecurityScheme()
-                                .type(SecurityScheme.Type.HTTP)
-                                .scheme("bearer")
-                                .bearerFormat("JWT")));
-    }
+        @Bean
+        public OpenAPI customOpenAPI() {
+                return new OpenAPI()
+                                .info(new Info()
+                                                .title("Smart Clinic API")
+                                                .version("1.0")
+                                                .description("Documentation for Smart Clinic System Backend"))
+                                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+                                .components(new Components()
+                                                .addSecuritySchemes("bearerAuth", new SecurityScheme()
+                                                                .type(SecurityScheme.Type.HTTP)
+                                                                .scheme("bearer")
+                                                                .bearerFormat("JWT")));
+        }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://54.198.255.126"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-        configuration.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
+                CorsConfiguration configuration = new CorsConfiguration();
+                configuration.setAllowedOrigins(Arrays.asList("http://54.198.255.126"));
+                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+                configuration.setAllowCredentials(true);
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", configuration);
+                return source;
+        }
 }

@@ -1,0 +1,34 @@
+# Compiled Java
+target/
+*.class
+
+# Spring Boot
+*.log
+*.tmp
+.idea/
+*.iml
+*.iws
+*.ipr
+.mvn/
+mvnw
+mvnw.cmd
+.apt_generated
+.springBeans
+
+# Angular / Node
+node_modules/
+dist/
+npm-debug.log
+yarn-error.log
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
